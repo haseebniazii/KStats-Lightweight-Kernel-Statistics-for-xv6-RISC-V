@@ -7,7 +7,8 @@
 
 ## 📌 Project Overview
 
-**XMon** is a university Operating Systems project based on the official **MIT xv6-RISC-V kernel**.  
+**XMon** is a university Operating Systems project based on the official **MIT xv6-RISC-V kernel**.
+
 The project will extend xv6 by adding **5 unique kernel modules** focused on monitoring, diagnostics, multicore activity, event tracing, and controlled reliability testing.
 
 The main goal is to keep the original xv6 design simple while adding useful features that are easy to understand, implement, test, and demonstrate.
@@ -52,21 +53,21 @@ flowchart TB
         CPU["🖥️ Hart Activity<br/>Monitor"]
         FLIGHT["📜 Kernel Flight<br/>Recorder"]
         FAULT["🧪 Fault Injection"]
+
+        MAIN --> BOOT
+        KALLOC --> MEM
+        KALLOC --> FAULT
+        PROC --> CPU
+        TRAP --> CPU
+        PROC --> FLIGHT
+        TRAP --> FLIGHT
+        SYSCALL --> FLIGHT
     end
 
     HW["⚙️ RISC-V Hardware<br/>QEMU"]
 
     USER --> XV6
     XV6 --> HW
-
-    MAIN --> BOOT
-    KALLOC --> MEM
-    KALLOC --> FAULT
-    PROC --> CPU
-    TRAP --> CPU
-    PROC --> FLIGHT
-    TRAP --> FLIGHT
-    SYSCALL --> FLIGHT
 ```
 
 ---
@@ -92,11 +93,11 @@ flowchart LR
 ```mermaid
 flowchart LR
 
-    M1["Boot-Time Profiler"] --> F1["main.c"]
-    M2["Memory Health Monitor"] --> F2["kalloc.c"]
-    M3["Hart Activity Monitor"] --> F3["proc.c + trap.c"]
-    M4["Kernel Flight Recorder"] --> F4["proc.c + trap.c + syscall.c"]
-    M5["Fault Injection"] --> F5["kalloc.c"]
+    M1["⏱️ Boot-Time Profiler"] --> F1["main.c"]
+    M2["🧠 Memory Health Monitor"] --> F2["kalloc.c"]
+    M3["🖥️ Hart Activity Monitor"] --> F3["proc.c + trap.c"]
+    M4["📜 Kernel Flight Recorder"] --> F4["proc.c + trap.c + syscall.c"]
+    M5["🧪 Fault Injection"] --> F5["kalloc.c"]
 ```
 
 ---
@@ -125,7 +126,7 @@ MIT xv6-RISC-V
 XMon Enhanced xv6 Kernel
 ```
 
-The project will remain small enough to understand and explain, while still looking professional and unique for a university Operating Systems project.
+The project will remain small enough to understand and explain while still looking professional and unique for a university Operating Systems project.
 
 ---
 
@@ -133,7 +134,7 @@ The project will remain small enough to understand and explain, while still look
 
 **Status:** Project Selected / Planning Stage  
 **Implementation:** Not started yet  
-**Next Step:** Run original xv6 successfully and then implement each module one by one.
+**Next Step:** Run the original xv6 successfully and then implement each module one by one.
 
 ---
 
