@@ -1,4 +1,4 @@
-# 🧠 XMon — Kernel Monitoring & Reliability Extensions for xv6-RISC-V
+# 📊 KStats — Lightweight Kernel Statistics for xv6-RISC-V
 
 > **Operating Systems Project Proposal**  
 > Base Kernel: **MIT xv6-RISC-V**
@@ -7,30 +7,30 @@
 
 ## 📌 Project Overview
 
-**XMon** is a university Operating Systems project based on the official **MIT xv6-RISC-V kernel**.
+**KStats** is a university Operating Systems project based on the official **MIT xv6-RISC-V kernel**.
 
-The project will extend xv6 by adding **5 unique kernel modules** focused on monitoring, diagnostics, multicore activity, event tracing, and controlled reliability testing.
+The project will extend xv6 by adding **5 proposed lightweight kernel-monitoring modules**. These modules are designed to be simple to understand, easy to implement, easy to test, and suitable for a university demonstration.
 
-The main goal is to keep the original xv6 design simple while adding useful features that are easy to understand, implement, test, and demonstrate.
+The project focuses on collecting useful kernel statistics without redesigning major xv6 subsystems.
 
 ---
 
 ## 🧩 Proposed 5 Modules
 
 ### 1. ⏱️ Boot-Time Profiler
-Measures the time or CPU cycles used by important xv6 kernel initialization stages during boot.
+Measures the time or CPU/timer cycles used by important xv6 kernel initialization stages during boot.
 
-### 2. 🧠 Kernel Memory Health Monitor
-Tracks physical memory usage such as free pages, used pages, allocation calls, free calls, peak usage, and failed allocations.
+### 2. 👤 Process Lifecycle Monitor
+Tracks basic process activity such as process creation, process exit, and completed process cleanup/reaping events.
 
-### 3. 🖥️ Per-CPU / RISC-V Hart Activity Monitor
-Tracks basic activity of each RISC-V CPU/hart, including timer events, kernel entries, and selected trap activity.
+### 3. 💤 Sleep/Wakeup Activity Monitor
+Counts how often processes go to sleep and how often sleeping processes are awakened by the kernel.
 
-### 4. 📜 Kernel Flight Recorder
-Stores recent important kernel events in a circular buffer so they can later be viewed like a small kernel “black box”.
+### 4. ⚠️ Page Fault Counter
+Tracks page-fault events handled by the kernel and records basic fault statistics.
 
-### 5. 🧪 Controlled Kernel Fault Injection
-Allows selected failures, such as controlled memory-allocation failures, to be generated for testing kernel reliability.
+### 5. 🕒 Kernel Tick & Uptime Monitor
+Tracks timer ticks and provides simple system uptime and timer-activity statistics.
 
 ---
 
@@ -39,32 +39,27 @@ Allows selected failures, such as controlled memory-allocation failures, to be g
 ```mermaid
 flowchart TB
 
-    USER["👤 User Commands"]
+    USER["👤 User Statistics Commands"]
 
     subgraph XV6["🧠 MIT xv6-RISC-V Kernel"]
         MAIN["main.c<br/>Kernel Boot"]
-        KALLOC["kalloc.c<br/>Memory"]
-        PROC["proc.c<br/>Processes / CPUs"]
-        TRAP["trap.c<br/>Traps / Interrupts"]
-        SYSCALL["syscall.c<br/>System Calls"]
+        PROC["proc.c<br/>Processes"]
+        TRAP["trap.c<br/>Traps / Timer"]
 
         BOOT["⏱️ Boot-Time<br/>Profiler"]
-        MEM["🧠 Memory Health<br/>Monitor"]
-        CPU["🖥️ Hart Activity<br/>Monitor"]
-        FLIGHT["📜 Kernel Flight<br/>Recorder"]
-        FAULT["🧪 Fault Injection"]
+        LIFE["👤 Process Lifecycle<br/>Monitor"]
+        SLEEP["💤 Sleep/Wakeup<br/>Monitor"]
+        FAULT["⚠️ Page Fault<br/>Counter"]
+        TICK["🕒 Tick & Uptime<br/>Monitor"]
 
         MAIN --> BOOT
-        KALLOC --> MEM
-        KALLOC --> FAULT
-        PROC --> CPU
-        TRAP --> CPU
-        PROC --> FLIGHT
-        TRAP --> FLIGHT
-        SYSCALL --> FLIGHT
+        PROC --> LIFE
+        PROC --> SLEEP
+        TRAP --> FAULT
+        TRAP --> TICK
     end
 
-    HW["⚙️ RISC-V Hardware<br/>QEMU"]
+    HW["⚙️ RISC-V Machine<br/>QEMU"]
 
     USER --> XV6
     XV6 --> HW
@@ -77,13 +72,13 @@ flowchart TB
 ```mermaid
 flowchart LR
 
-    A["🚀 Boot xv6"] --> B["⚙️ Initialize XMon Modules"]
+    A["🚀 Boot xv6"] --> B["⚙️ Initialize KStats Counters"]
     B --> C["🧠 Kernel Runs Normally"]
-    C --> D["📊 Monitor Kernel Events"]
-    D --> E["💾 Store Statistics / Logs"]
-    E --> F["👤 User Runs XMon Command"]
-    F --> G["📤 Kernel Returns Results"]
-    G --> H["🖥️ Display Output in QEMU"]
+    C --> D["📊 Kernel Events Occur"]
+    D --> E["🔢 KStats Updates Counters"]
+    E --> F["👤 User Runs Statistics Command"]
+    F --> G["📤 Kernel Returns Data"]
+    G --> H["🖥️ Results Display in QEMU"]
 ```
 
 ---
@@ -93,11 +88,11 @@ flowchart LR
 ```mermaid
 flowchart LR
 
-    M1["⏱️ Boot-Time Profiler"] --> F1["main.c"]
-    M2["🧠 Memory Health Monitor"] --> F2["kalloc.c"]
-    M3["🖥️ Hart Activity Monitor"] --> F3["proc.c + trap.c"]
-    M4["📜 Kernel Flight Recorder"] --> F4["proc.c + trap.c + syscall.c"]
-    M5["🧪 Fault Injection"] --> F5["kalloc.c"]
+    M1["Boot-Time Profiler"] --> F1["main.c"]
+    M2["Process Lifecycle Monitor"] --> F2["proc.c"]
+    M3["Sleep/Wakeup Monitor"] --> F3["proc.c"]
+    M4["Page Fault Counter"] --> F4["trap.c"]
+    M5["Tick & Uptime Monitor"] --> F5["trap.c"]
 ```
 
 ---
@@ -116,25 +111,23 @@ flowchart LR
 
 ## 🎯 Final Goal
 
-The final project will demonstrate:
-
 ```text
 MIT xv6-RISC-V
       +
-5 Custom Kernel Modules
+5 Lightweight Kernel Statistics Modules
       =
-XMon Enhanced xv6 Kernel
+KStats Enhanced xv6 Kernel
 ```
 
-The project will remain small enough to understand and explain while still looking professional and unique for a university Operating Systems project.
+The project is intended to remain simple enough to understand, implement, test, and explain confidently during a university presentation or viva.
 
 ---
 
 ## 📊 Current Status
 
-**Status:** Project Selected / Planning Stage  
+**Status:** Project Selection / Planning Stage  
 **Implementation:** Not started yet  
-**Next Step:** Run the original xv6 successfully and then implement each module one by one.
+**Next Step:** Run the original xv6 kernel successfully and then implement each KStats module one by one.
 
 ---
 
